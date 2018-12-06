@@ -20,7 +20,7 @@ CFLAGS	= -Wall -Wextra -Werror
 
 # mlx library
 MLX_INC	= -I /usr/local/includes
-MLX_LNK	= -L /usr/local/lib/ -l mlx -framework OpenGL -framework AppKit
+MLX_LNK	= -L /usr/local/lib
 
 # ft library
 FT		= ./includes/libft/
@@ -33,6 +33,14 @@ FT_TASK = all;
 SRCDIR	= ./srcs/
 INCDIR	= ./includes/
 OBJDIR	= ./objs/
+
+# OS COMPATIBILITES
+UNAME :=$(shell uname)
+ifeq ($(UNAME), Linux)
+	MLX_LNK			+=	-lmlx -lft -lXext -lX11 -lm
+else
+	MLX_LMK			+=	-framework OpenGL -framework AppKit
+endif
 
 all: obj $(FT_LIB) $(NAME)
 

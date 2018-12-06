@@ -32,7 +32,7 @@ int		key(int k, void *pram)
 t_vec2		project(t_vec3 c, t_vec3 a)
 {
 	//t_vec3 e = vec3(0, 0, 0.1);
-	t_mat4 m = mat4_rotate_x(M_PI_4);
+	t_mat4 m = mat4_identity();
 	t_vec3 d = mat4_mulv(m, vec3_subv(a, c));
 	t_vec2 b = vec2((d.x * 500) / (d.z * 500) * 100, (d.y * 500) / (d.z * 500) * 100);
 	printf("project (%d, %d)\n", b.x, b.y);
@@ -84,14 +84,14 @@ int		main(int argc, char **argv)
 				a = vec3((col + 1) * 2, row * 2, (line->values[col + 1]) * 0.05);
 				pixel2 = project(c, a);
 				int c = line->values[col + 1] > 0 ? 0x0000FF00 : 0x00FF0000;
-				//TODO draw Hline (to ((col + 1) * 10, row * 10))
+				//draw Hline (to ((col + 1) * 2, row * 2))
 				draw_line(mlx, window, pixel, pixel2, c);
 			}
 			if (col < map->cols && n_line)
 			{
 				a = vec3(col * 2, (row + 1) * 2, (n_line->values[col]) * 0.05);
 				pixel2 = project(c, a);
-				//TODO draw Vline (to (col * 10, (row + 1) * 10))
+				//draw Vline (to (col * 2, (row + 1) * 2))
 				int c = n_line->values[col] > 0 ? 0x0000FF00 : 0x00FF0000;
 				draw_line(mlx, window, pixel, pixel2, c);
 			}
