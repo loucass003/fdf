@@ -6,21 +6,21 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:11:14 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/05 12:07:16 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/06 20:01:05 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	draw_line(void *mlx, void *window, t_vec2 p0, t_vec2 p1, int color)
+void	draw_line(void *mlx, void *window, t_pixel p0, t_pixel p1, int color)
 {
-	t_vec2		delta;
-	t_vec2		s;
+	t_pixel		delta;
+	t_pixel		s;
 	int 		e2;
 	int			err;
 
-	delta = vec2(ft_abs(p1.x - p0.x), ft_abs(p1.y - p0.y));
-	s = vec2((p0.x < p1.x ? 1 : -1), (p0.y < p1.y ? 1 : -1));
+	delta = (t_pixel){ft_abs(p1.x - p0.x), ft_abs(p1.y - p0.y)};
+	s = (t_pixel){(p0.x < p1.x ? 1 : -1), (p0.y < p1.y ? 1 : -1)};
 	err = (delta.x > delta.y ? delta.x : -delta.y) / 2;
 	while(!TRUENT)
 	{
