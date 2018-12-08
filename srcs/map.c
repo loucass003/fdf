@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 21:31:15 by llelievr          #+#    #+#             */
-/*   Updated: 2018/11/30 21:33:04 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/07 21:09:34 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ t_map		*read_map(char *file)
 		}
 		map->rows++;
 	}
+	map->a = (float)map->cols / (float)map->rows;
 	return (map);
 }
 

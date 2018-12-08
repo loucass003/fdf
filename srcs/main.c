@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/06 22:47:44 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/08 23:37:11 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,149 +14,131 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int		key(int k, void *pram)
+#define KEY_ESC (53)
+#define KEY_W (13)
+#define KEY_A (0)
+#define KEY_S (1)
+#define KEY_D (2)
+#define KEY_I (34)
+#define KEY_J (38)
+#define KEY_K (40)
+#define KEY_L (37)
+#define KEY_SHIFT (257)
+#define KEY_SPACE (49)
+#define KEY_PAGE_U (116)
+#define KEY_PAGE_D (121)
+
+int		key(int k, t_fdf *inst)
 {
-	(void)k;
-	(void)pram;
+	t_vec3	incrt = (t_vec3){0, 0, 0};
+	t_vec3	incrr = (t_vec3){0, 0, 0};
+	const float		speed = 2;
+
+	if (k == KEY_ESC)
+	{
+		exit(0);//TODO exit -> clear all vars;
+	}
+	if (k == KEY_A || k == KEY_D)
+	{
+		incrt = (t_vec3){
+			.x = cosf(inst->camera->rotation.y), 
+			.z = sin(inst->camera->rotation.y),
+			.y = 0
+		};
+		if (k == KEY_D)
+			incrt = ft_vec3_inv(incrt);
+	}
+	if (k == KEY_W || k == KEY_S)
+	{
+		//incrt.z = (k == KEY_S ? -speed : speed);
+		incrt = (t_vec3){
+			sin(inst->camera->rotation.y),
+			-sin(inst->camera->rotation.x),
+			-cos(inst->camera->rotation.y) 
+		};
+		if (k == KEY_W)
+			incrt = ft_vec3_inv(incrt);
+	}
+	if (k == KEY_SHIFT || k == KEY_SPACE)
+		incrt.y = (k == KEY_SHIFT ? -1 : 1);
+	if (k == KEY_I || k == KEY_K)
+		incrr.x = (k == KEY_I ? 0.05 : -0.05);
+	if (k == KEY_J || k == KEY_L)
+		incrr.y = (k == KEY_J ? -0.05 : 0.05);
+	if (k == KEY_PAGE_U || k == KEY_PAGE_D)
+		inst->map->a += (k == KEY_PAGE_U ? 0.1 : -0.1);
+	ft_putnbr(k);
+	ft_putendl("");
+	incrt = ft_vec3_mul(incrt, (t_vec3){speed, speed, speed});
+	inst->camera->rotation = ft_vec3_add(inst->camera->rotation, incrr);
+	inst->camera->pos = ft_vec3_add(inst->camera->pos, incrt);
+	inst->camera->matrix = ft_mat4_mul(
+		ft_mat4_rotation(inst->camera->rotation),
+		ft_mat4_translation(inst->camera->pos)
+	);
+	/*cam_view(inst->camera, inst->camera->rotation.x, inst->camera->rotation.y)*/;
+	draw_map(inst);
 	return (0);
 }
 
 t_mat4	mat4_projection_perspective(float angle, float near, float far)
 {
 	const float	scale = 1 / tanf(angle * 0.5 * M_PI / 180);
-	const float	a = -far / (far - near);
-	const float	b = (-far * near) / (far - near);
-	return ((t_mat4)((t_mat4_data) {
-		scale, 0, 0, 0,
+	const float	a = (-far + near) / (far - near);
+	const float	b = 2 * (far * near) / (far - near);
+	const t_mat4 perspective = ((t_mat4)((t_mat4_data) {
+		-scale, 0, 0, 0,
 		0, scale, 0, 0,
-		0, 0, a, b,
-		0, 0, -1, 0
+		0, 0, a, -1,
+		0, 0, b, 0
 	}));
+	return ft_mat4_mul(perspective, ft_mat4_scale((t_vec3){1, 1, 1}));
 }
 
 #define SQRT36 (0.70710678118)
 #define SQRT26 (0.57735026919)
 
-t_mat4	mat4_isometric()
+/*t_mat4	mat4_isometric()
 {
 	return ((t_mat4)(t_mat4_data) {
-		SQRT36, 0, 0, -SQRT36,
-		1     , 2, 1, 0,
-		SQRT26, -SQRT26, SQRT26, 0,
-		0    , 0    , -1 , 0
+		-SQRT36, 0, 0, -SQRT36,
+		1     , 1, 2, 0,
+		-SQRT26, SQRT26, SQRT26, 0,
+		0    , 0    , 1 , 0
 	});
-}
 
-/*static t_mat4	s_rotate_x(float a)
-{
-	return ((t_mat4)((t_mat4_data){
-		1, 0, 0, 0,
-		0, cosf(a), -sinf(a), 0,
-		0, sinf(a), cosf(a), 0,
-		0, 0, 0, 1
-	}));
 }*/
-
-/*static t_mat4	s_rotate_y(float a)
-{
-	return ((t_mat4)((t_mat4_data) {
-		cosf(a), 0, sinf(a), 0,
-		0, 1, 0, 0,
-		-sinf(a), 0, cosf(a), 0,
-		0, 0, 0, 1
-	}));
-}*/
-
-/*static t_mat4	s_rotate_z(float a)
-{
-	return ((t_mat4)((t_mat4_data) {
-		cosf(a), -sinf(a), 0, 0,
-		sinf(a), cosf(a), 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	}));
-}*/
-
-t_pixel	project(t_cam cam, t_mat4 projection, t_vec3 p)
-{
-	t_vec3 vec;
-	//vec = ft_mat4_mulv(s_rotate_y(M_PI), p);
-	//vec = ft_mat4_mulv(s_rotate_z(M_PI_4), p);
-	vec = ft_mat4_mulv(cam.pos, p);
-	vec = ft_mat4_mulv(projection, vec);
-	t_pixel pi = (t_pixel){ 
-		(int)((vec.x + 1) * 0.5 * 500), 
-		(int)((1 - (vec.y + 1) * 0.5) * 500)
-	};
-	printf("(%d, %d)", pi.x, pi.y);
-	return (pi);
-}
 
 int		main(int argc, char **argv)
 {
-	void	*mlx;
-	void	*window;
-	t_map	*map;
+	t_fdf inst;
 
 	if (argc != 2)
 		return (0);
-	map = read_map(argv[1]);
-	if (!map)
+	if (!(inst.map = read_map(argv[1])))
 	{
 		ft_putstr("Error: impossible de lire la map\n");
 		return (0);
 	}
-	//printf("%d\n", m_value(map, 5, 5));
-	
-	mlx = mlx_init();
-	window = mlx_new_window(mlx, 500, 500, "test");
-	t_list *lst = map->lines;
-	size_t row = 0;
-	size_t col;
-	t_cam cam;
-	cam.rotation = ft_mat4_rotation((t_vec3){0, 0, 0});
-	cam.pos = ft_mat4_translation((t_vec3){5, 0, -20});
+	inst.size = (t_pixel){ 1000, 1000 };
 
-	//t_mat4 projection = mat4_isometric();
-	t_mat4 projection = mat4_projection_perspective(90, 0.1, 100);
-	while (lst)
-	{
-		t_line *line = lst->content;
-		col = 0;
-		while (col < map->cols)
-		{
-			t_vec3 a = (t_vec3){col, row, (line->values[col]) * 0.2};
-			t_pixel pixel = project(cam, projection, a);
-			t_pixel pixel2;
-			t_line *n_line = lst->next ? (lst->next)->content : NULL;
-			if (col + 1 < map->cols)
-			{
-				a = (t_vec3){(col + 1), row, (line->values[col + 1]) * 0.2};
-				pixel2 = project(cam, projection, a);
-				int c = line->values[col + 1] > 0 ? 0x0000FF00 : 0x00FF0000;
-				//draw Hline (to ((col + 1), row))
-				draw_line(mlx, window, pixel, pixel2, c);
-			}
-			if (col < map->cols && n_line)
-			{
-				a = (t_vec3){col, (row + 1), (n_line->values[col]) * 0.2};
-				pixel2 = project(cam, projection, a);
-				//draw Vline (to (col, (row + 1)))
-				int c = n_line->values[col] > 0 ? 0x0000FF00 : 0x00FF0000;
-				draw_line(mlx, window, pixel, pixel2, c);
-			}
-			col++;
-		}
-		lst = lst->next;
-		row++;
-	}
+	inst.mlx = mlx_init();
+	inst.win = mlx_new_window(inst.mlx, inst.size.x, inst.size.y, "test");
+	inst.img = mlx_new_image(inst.mlx, inst.size.x, inst.size.y);
+	t_cam camera;
+	camera.rotation = (t_vec3){0, 0, 0};
+	camera.pos = (t_vec3){0, 0, -100};
+	t_mat4 matrix = ft_mat4_mul(
+		ft_mat4_rotation(camera.rotation), 
+		ft_mat4_translation(camera.pos)
+	);
+	camera.matrix = matrix;
+	inst.camera = &camera;
+	//inst.projection = mat4_isometric();
+	inst.projection = mat4_projection_perspective(120, 0.1, 100);
 
-	mlx_pixel_put(mlx, window, 250, 250, 0x00FF0000);
-	/*draw_line(mlx, window, vec2(0,0), vec2(500, 500), 0x00FF00FF);
-	draw_line(mlx, window, vec2(0,500), vec2(500, 0), 0x00FF00FF);
-	draw_line(mlx, window, vec2(250,250), vec2(0, 15), 0x0000FF00);
-	draw_line(mlx, window, vec2(250,250), vec2(0, 485), c_rgb(0, 0, 255));*/
-	mlx_key_hook(window, key, (void *)0);
-	mlx_loop(mlx);
+	draw_map(&inst);
+	mlx_hook(inst.win, 2, 1, key, &inst);
+	mlx_loop(inst.mlx);
 	return (0);
 }
