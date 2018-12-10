@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:11:14 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/08 19:34:22 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/10 17:34:31 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void	draw_line(t_fdf *inst, t_pixel p0, t_pixel p1, int color)
 		if (p0.x < 0 || p0.x > inst->size.x || p0.y < 0 || p0.y > inst->size.y)
 			if (p1.x < 0 || p1.x > inst->size.x || p1.y < 0 || p1.y > inst->size.y)	
 				return ;
-		//mlx_pixel_put(inst->mlx, inst->win, p0.x, p0.y, color);	
 		put_pixel(inst, p0, color);
 		if (p0.x == p1.x && p0.y == p1.y)
 			break;

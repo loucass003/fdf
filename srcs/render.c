@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/30 21:15:45 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/08 23:41:29 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/10 17:43:27 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@
 static t_pixel	project(t_fdf *inst, t_vec3 p)
 {
 	t_vec3 vec;
-	p = ft_vec3_sub(p, (t_vec3){inst->map->cols / 2, 0, inst->map->rows / 2});
-	vec = ft_mat4_mulv(ft_mat4_mul(inst->projection, inst->camera->matrix), p);
+	p = ft_vec3_sub(p, (t_vec3){inst->map->cols * 0.5, 0, inst->map->rows * 0.5});
+	vec = ft_mat4_mulv(/*ft_mat4_mul(inst->projection, inst->camera->matrix)*/inst->camera->matrix, p);
+	//printf("%f\n", vec.z);
 	t_pixel pi = (t_pixel){ 
 		(int)((vec.x + 1) * 0.5 * inst->size.x), 
 		(int)((1 - (vec.y + 1) * 0.5) * inst->size.y)
@@ -59,8 +60,6 @@ void			draw_map(t_fdf *inst)
 	int		s_line;
 	int		endian;
 	
-	//mlx_clear_window(inst->mlx, inst->win);
-	
 	if (!!(img = mlx_get_data_addr(inst->img, &s_pixel, &s_line, &endian)))
 		ft_bzero(img, (inst->size.y * s_line));
 	while (lst)
@@ -77,13 +76,13 @@ void			draw_map(t_fdf *inst)
 			if (col + 1 < (inst->map)->cols)
 			{
 				a = (t_vec3){(col + 1), -(line->values[col + 1]) * inst->map->a, row};
-				int c = line->values[col] > 0 || line->values[col + 1] > 0 ? 0x0000FF00 : 0x00FF0000;
+				int c = line->values[col] > 0 || line->values[col + 1] > 0 ? 0x0000FF00 : 0x000000CC;
 				draw_line(inst, p, project(inst, a), c);
 			}
 			if (col < (inst->map)->cols && n_line)
 			{
 				a = (t_vec3){col, -(n_line->values[col]) * inst->map->a, row + 1};
-				int c = line->values[col] > 0 || n_line->values[col] > 0 ? 0x0000FF00 : 0x00FF0000;
+				int c = line->values[col] > 0 || n_line->values[col] > 0 ? 0x0000FF00 : 0x000000CC;
 				draw_line(inst, p, project(inst, a), c);
 			}
 			col++;

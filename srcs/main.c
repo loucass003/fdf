@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/08 23:37:11 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/10 17:24:25 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,8 @@ int		key(int k, t_fdf *inst)
 	if (k == KEY_A || k == KEY_D)
 	{
 		incrt = (t_vec3){
-			.x = cosf(inst->camera->rotation.y), 
-			.z = sin(inst->camera->rotation.y),
-			.y = 0
+			.x = cosf(inst->camera->rotation.y),
+			.z = sin(inst->camera->rotation.y)
 		};
 		if (k == KEY_D)
 			incrt = ft_vec3_inv(incrt);
@@ -52,7 +51,7 @@ int		key(int k, t_fdf *inst)
 	{
 		//incrt.z = (k == KEY_S ? -speed : speed);
 		incrt = (t_vec3){
-			sin(inst->camera->rotation.y),
+			sin(inst->camera->rotation.y) * cos(inst->camera->rotation.x),
 			-sin(inst->camera->rotation.x),
 			-cos(inst->camera->rotation.y) 
 		};
@@ -76,7 +75,7 @@ int		key(int k, t_fdf *inst)
 		ft_mat4_rotation(inst->camera->rotation),
 		ft_mat4_translation(inst->camera->pos)
 	);
-	/*cam_view(inst->camera, inst->camera->rotation.x, inst->camera->rotation.y)*/;
+	inst->camera->matrix = ft_mat4_mul(inst->projection, inst->camera->matrix);
 	draw_map(inst);
 	return (0);
 }
@@ -126,7 +125,7 @@ int		main(int argc, char **argv)
 	inst.win = mlx_new_window(inst.mlx, inst.size.x, inst.size.y, "test");
 	inst.img = mlx_new_image(inst.mlx, inst.size.x, inst.size.y);
 	t_cam camera;
-	camera.rotation = (t_vec3){0, 0, 0};
+	camera.rotation = (t_vec3){/*-M_PI_2*/0, 0, 0};
 	camera.pos = (t_vec3){0, 0, -100};
 	t_mat4 matrix = ft_mat4_mul(
 		ft_mat4_rotation(camera.rotation), 
@@ -136,6 +135,7 @@ int		main(int argc, char **argv)
 	inst.camera = &camera;
 	//inst.projection = mat4_isometric();
 	inst.projection = mat4_projection_perspective(120, 0.1, 100);
+	camera.matrix = ft_mat4_mul(inst.projection, matrix);
 
 	draw_map(&inst);
 	mlx_hook(inst.win, 2, 1, key, &inst);
