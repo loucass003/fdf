@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 21:31:15 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/10 17:23:40 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 00:14:04 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,14 @@ t_line		*read_line(char **values)
 		return (NULL);
 	}
 	line->len = len;
+	line->max = 0;
+	line->min = 0;
 	while (len-- > 0)
+	{
 		line->values[len] = ft_atoi(values[len]);
+		line->max = fmax(line->values[len], line->max);
+		line->min = fmin(line->values[len], line->min);
+	}
 	return (line);
 }
 
@@ -63,14 +69,18 @@ t_map		*read_map(char *file)
 	map->lines = NULL;
 	map->cols = 0;
 	map->rows = 0;
+	map->min = 0;
+	map->max = 0;
 	while (ft_gnl(fd, &line) > 0)
 	{
 		content = read_line(ft_strsplit(line, ' '));
-		if (map->cols > 0 && map->cols != content->len)
+		if (!content || (map->cols > 0 && map->cols != content->len))
 		{
 			clean(&map, &content, &line);
 			return (NULL);
 		}
+		map->max = fmax(map->max, content->max);
+		map->min = fmin(map->min, content->min);
 		map->cols = content->len;
 		if (!map->lines)
 			map->lines = ft_lstnew(content, sizeof(t_line));

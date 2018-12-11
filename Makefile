@@ -16,7 +16,7 @@ OBJ		= $(addprefix $(OBJDIR),$(SRC:.c=.o))
 
 # compiler
 CC		= gcc
-CFLAGS	= -Wall -Wextra -Werror -flto -O3
+CFLAGS	= -Wall -Werror -Wextra 
 
 # mlx library
 MLX_INC	= -I /usr/local/include
@@ -37,7 +37,7 @@ OBJDIR	= ./objs/
 # OS COMPATIBILITES
 UNAME :=$(shell uname)
 ifeq ($(UNAME), Linux)
-	MLX_LNK += -lmlx -lXext -lX11 -lm
+	MLX_LNK += -lmlx -lXext -lX11
 else
 	MLX_LNK += -lmlx -framework OpenGL -framework AppKit
 endif

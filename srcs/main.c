@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/10 17:24:25 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 00:39:14 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,35 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define KEY_ESC (53)
-#define KEY_W (13)
-#define KEY_A (0)
-#define KEY_S (1)
-#define KEY_D (2)
-#define KEY_I (34)
-#define KEY_J (38)
-#define KEY_K (40)
-#define KEY_L (37)
-#define KEY_SHIFT (257)
-#define KEY_SPACE (49)
-#define KEY_PAGE_U (116)
-#define KEY_PAGE_D (121)
+#ifndef __linux__
+	#define KEY_ESC (53)
+	#define KEY_W (13)
+	#define KEY_A (0)
+	#define KEY_S (1)
+	#define KEY_D (2)
+	#define KEY_I (34)
+	#define KEY_J (38)
+	#define KEY_K (40)
+	#define KEY_L (37)
+	#define KEY_SHIFT (257)
+	#define KEY_SPACE (49)
+	#define KEY_PAGE_U (116)
+	#define KEY_PAGE_D (121)
+#else
+	#define KEY_ESC (65307)
+	#define KEY_W (119)
+	#define KEY_A (97)
+	#define KEY_S (115)
+	#define KEY_D (100)
+	#define KEY_I (105)
+	#define KEY_J (106)
+	#define KEY_K (107)
+	#define KEY_L (108)
+	#define KEY_SHIFT (65505)
+	#define KEY_SPACE (32)
+	#define KEY_PAGE_U (65365)
+	#define KEY_PAGE_D (65366)
+#endif
 
 int		key(int k, t_fdf *inst)
 {
@@ -120,6 +136,12 @@ int		main(int argc, char **argv)
 		return (0);
 	}
 	inst.size = (t_pixel){ 1000, 1000 };
+	if (!(inst.p_img = (t_zpixel*)ft_memalloc(sizeof(t_zpixel) * (inst.size.x * inst.size.y))))
+	{
+		ft_putstr("Error: impossible d'alouer le buffer\n");
+		return (0);
+	}
+	printf("(min -> %d, max -> %d)", inst.map->min, inst.map->max);
 
 	inst.mlx = mlx_init();
 	inst.win = mlx_new_window(inst.mlx, inst.size.x, inst.size.y, "test");
