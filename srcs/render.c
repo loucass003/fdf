@@ -6,14 +6,14 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/30 21:15:45 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 00:52:36 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 17:28:17 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 #include <stdio.h>
 
-static t_zpixel	project(t_fdf *inst, t_vec3 p)
+static t_bool	project(t_fdf *inst, t_vec3 p, t_zpixel *pi)
 {
 	int y;
 	t_vec3 vec;
@@ -22,15 +22,19 @@ static t_zpixel	project(t_fdf *inst, t_vec3 p)
 	p = ft_vec3_mul(p, (t_vec3){1, inst->map->a, 1});
 	vec = ft_mat4_mulv(/*ft_mat4_mul(inst->projection, inst->camera->matrix)*/inst->camera->matrix, p);
 	//printf("%f\n", vec.z);
-	t_zpixel pi = (t_zpixel){ 
+	/*if (vec.z > 0)
+		return (FALSE);*/
+
+	*pi = ((t_zpixel){ 
 		(int)((vec.x + 1) * 0.5 * inst->size.x),
 		(int)((1 - (vec.y + 1) * 0.5) * inst->size.y),
-		-y
-	};
-	return (pi);
+		-y,
+		0
+	});
+	return (TRUE);
 }
 
-t_bool			put_pixel(t_fdf *inst, t_zpixel p, int color)
+t_bool			put_pixel(t_fdf *inst, t_zpixel p)
 {
 	char 	*img;
 	int		s_pixel;
@@ -41,9 +45,8 @@ t_bool			put_pixel(t_fdf *inst, t_zpixel p, int color)
 		return (FALSE);
 	if (p.x < 0 || p.x >= inst->size.x - 1 || p.y < 0 || p.y >= inst->size.y - 1)
 		return (FALSE);
-	
-	//color = inst->p_img[(p.y * inst->size.x) + p.x].z_index <= p.z_index ? color : (int)(img[(p.y * s_line) + (p.x * 4)]);
-	ft_memmove(img + (p.y * s_line) + (p.x * 4), &color, 4);
+	if (p.z_index < inst->p_img[(p.y * inst->size.x) + p.x].z_index)
+		return (FALSE);
 	inst->p_img[(p.y * inst->size.x) + p.x] = p;
 	return (TRUE);
 }
@@ -63,15 +66,27 @@ void			draw_map(t_fdf *inst)
 	size_t row = 0;
 	size_t col;
 	t_zpixel p;
+	t_zpixel p2;
 	t_vec3	a;
 	char 	*img;
 	int		s_pixel;
 	int		s_line;
 	int		endian;
 	
+	int x = 0;
+	int y = 0;
+	while (y < (inst->size.y))
+	{
+		x = 0;
+		while (x < (inst->size.x))
+		{
+			inst->p_img[(y * inst->size.x) + x] = (t_zpixel){ x, y, inst->map->min, 0};
+			x++;
+		}
+		y++;
+	}
 	if (!!(img = mlx_get_data_addr(inst->img, &s_pixel, &s_line, &endian)))
 		ft_bzero(img, (inst->size.y * s_line));
-	ft_bzero(inst->p_img, (inst->size.x * inst->size.y));
 	while (lst)
 	{
 		line = lst->content;
@@ -79,24 +94,38 @@ void			draw_map(t_fdf *inst)
 		while (col < (inst->map)->cols)
 		{
 			a = (t_vec3){col, -(line->values[col]), row};
-			p = project(inst, a);
+			if (!project(inst, a, &p))
+				continue ;
 			t_line *n_line = lst->next ? (lst->next)->content : NULL;
 			if (col + 1 < (inst->map)->cols)
 			{
 				a = (t_vec3){(col + 1), -(line->values[col + 1]), row};
-				int c = line->values[col] > 0 || line->values[col + 1] > 0 ? 0x0000FF00 : 0x000000CC;
-				draw_line(inst, p, project(inst, a), c);
+				project(inst, a, &p2);
+				draw_line(inst, p, p2);
 			}
 			if (col < (inst->map)->cols && n_line)
 			{
 				a = (t_vec3){col, -(n_line->values[col]), row + 1};
-				int c = line->values[col] > 0 || n_line->values[col] > 0 ? 0x0000FF00 : 0x000000CC;
-				draw_line(inst, p, project(inst, a), c);
+				project(inst, a, &p2);
+				draw_line(inst, p, p2);
 			}
 			col++;
 		}
 		lst = lst->next;
 		row++;
+	}
+
+	y = 0;
+	while (y < (inst->size.y))
+	{
+		x = 0;
+		while (x < (inst->size.x))
+		{
+			int color = inst->p_img[(y * inst->size.x) + x].color;
+			ft_memmove(img + (y * s_line) + (x * 4), &color, 4);
+			x++;
+		}
+		y++;
 	}
 	mlx_put_image_to_window(inst->mlx, inst->win, inst->img, 0, 0);
 }

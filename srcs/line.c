@@ -6,33 +6,49 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:11:14 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 01:29:35 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 15:07:23 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 #include <stdio.h>
 
+float	ft_absf(float f)
+{
+	return (f < 0 ? -f : f);
+}
+
 int rgb(float percent)
 {
-	if (percent == 1)
-		return (c_rgb(70,130, 180));
 	//printf("%f\n", percent);
-	int r = (255 + (0 - 255) * percent);
-    int g = (0 + (255 - 0) * percent);
+	if (percent < 0)
+	{
+		int p = ft_absf(percent);
+
+		int r = (0 + (78 - 0) * p);
+		int g = (255 + (46 - 255) * p);
+		int b = (0 + (40 - 0) * p);
+		return (c_rgb(r, g, b));
+	}
+	if (percent == 0)
+		return (c_rgb(70,130, 180));
+	
+	int r = (0 + (255 - 0) * percent);
+    int g = (255 + (0 - 255) * percent);
     int b = (0 + (0 - 0) * percent);
 
     return c_rgb(r, g, b);
 }
 
-void	draw_line(t_fdf *inst, t_zpixel p0, t_zpixel p1, int color)
+
+
+void	draw_line(t_fdf *inst, t_zpixel p0, t_zpixel p1)
 {
 	t_pixel		delta;
 	t_pixel		s;
 	int 		e2;
 	int			err;
 
-	(void)color;
 	delta = (t_pixel){
 		ft_abs(p1.x - p0.x),
 		ft_abs(p1.y - p0.y)
@@ -45,7 +61,10 @@ void	draw_line(t_fdf *inst, t_zpixel p0, t_zpixel p1, int color)
 			if (p1.x < 0 || p1.x > inst->size.x || p1.y < 0 || p1.y > inst->size.y)	
 				return ;
 		int z = fmax(p0.z_index, p1.z_index);
-		put_pixel(inst, p0, rgb(((float)(ft_abs(inst->map->max - inst->map->min) + z) / (float)(ft_abs(inst->map->max - inst->map->min)))));
+		//printf("z -- > %d \n", z);
+		p0.color = rgb((float)z / (float)(inst->map->max + inst->map->min));
+		put_pixel(inst, p0);
+		//put_pixel(inst, p0, color);
 		if (p0.x == p1.x && p0.y == p1.y)
 			break;
 		e2 = err;

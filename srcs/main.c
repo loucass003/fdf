@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 00:39:14 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 14:52:56 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ int		key(int k, t_fdf *inst)
 	}
 	if (k == KEY_W || k == KEY_S)
 	{
-		//incrt.z = (k == KEY_S ? -speed : speed);
 		incrt = (t_vec3){
 			sin(inst->camera->rotation.y) * cos(inst->camera->rotation.x),
 			-sin(inst->camera->rotation.x),
@@ -81,7 +80,7 @@ int		key(int k, t_fdf *inst)
 	if (k == KEY_J || k == KEY_L)
 		incrr.y = (k == KEY_J ? -0.05 : 0.05);
 	if (k == KEY_PAGE_U || k == KEY_PAGE_D)
-		inst->map->a += (k == KEY_PAGE_U ? 0.1 : -0.1);
+		inst->map->a += (k == KEY_PAGE_U ? 0.02 : -0.02);
 	ft_putnbr(k);
 	ft_putendl("");
 	incrt = ft_vec3_mul(incrt, (t_vec3){speed, speed, speed});
@@ -141,7 +140,7 @@ int		main(int argc, char **argv)
 		ft_putstr("Error: impossible d'alouer le buffer\n");
 		return (0);
 	}
-	printf("(min -> %d, max -> %d)", inst.map->min, inst.map->max);
+	printf("(min -> %d, max -> %d)  (w -> %zu h -> %zu)", inst.map->min, inst.map->max, inst.map->cols, inst.map->rows);
 
 	inst.mlx = mlx_init();
 	inst.win = mlx_new_window(inst.mlx, inst.size.x, inst.size.y, "test");

@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/10 23:23:36 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 00:39:13 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 11:57:00 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 
 t_zpixel		zpixel(t_pixel p)
 {
-	return ((t_zpixel){ p.x, p.y, 0});
+	return ((t_zpixel){ p.x, p.y, 0, 0});
 }

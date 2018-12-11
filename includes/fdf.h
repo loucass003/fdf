@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:02:19 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 00:09:50 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 13:22:52 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct	s_zpixel
 	int		x;
 	int		y;
 	int		z_index;
+	int		color;
 }				t_zpixel;
 
 typedef struct	s_fdf
@@ -79,8 +80,8 @@ t_mat4			cam_view(t_cam *cam, float yaw, float pitch);
 
 int				c_rgb(int r, int g, int b);
 
-t_bool			put_pixel(t_fdf *inst, t_zpixel p, int color);
-void			draw_line(t_fdf *inst, t_zpixel p1, t_zpixel p2, int color);
+t_bool			put_pixel(t_fdf *inst, t_zpixel p);
+void			draw_line(t_fdf *inst, t_zpixel p1, t_zpixel p2);
 void			draw_map(t_fdf *inst);
 
 t_map			*read_map(char *file);
