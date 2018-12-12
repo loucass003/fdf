@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/30 21:15:45 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 17:28:17 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 21:27:52 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,13 @@ static t_bool	project(t_fdf *inst, t_vec3 p, t_zpixel *pi)
 	p = ft_vec3_sub(p, (t_vec3){inst->map->cols * 0.5, 0, inst->map->rows * 0.5});
 	y = p.y;
 	p = ft_vec3_mul(p, (t_vec3){1, inst->map->a, 1});
-	vec = ft_mat4_mulv(/*ft_mat4_mul(inst->projection, inst->camera->matrix)*/inst->camera->matrix, p);
-	//printf("%f\n", vec.z);
-	/*if (vec.z > 0)
-		return (FALSE);*/
+	p = ft_vec3_div(p, (t_vec3){inst->map->cols, 1, inst->map->rows});
+	vec = ft_mat4_mulv(inst->camera->matrix, p);
+	//printf("point -> %f\n", );
+	if (vec.x < -2 || vec.x > 2 || vec.y < -2 || vec.y > 2 || vec.z < -1)
+		return (FALSE);
 
-	*pi = ((t_zpixel){ 
+	*pi = ((t_zpixel){
 		(int)((vec.x + 1) * 0.5 * inst->size.x),
 		(int)((1 - (vec.y + 1) * 0.5) * inst->size.y),
 		-y,
@@ -48,14 +49,6 @@ t_bool			put_pixel(t_fdf *inst, t_zpixel p)
 	if (p.z_index < inst->p_img[(p.y * inst->size.x) + p.x].z_index)
 		return (FALSE);
 	inst->p_img[(p.y * inst->size.x) + p.x] = p;
-	return (TRUE);
-}
-
-
-t_bool			can_compute(t_fdf *inst, t_vec3 p)
-{
-	(void)p;
-	(void)inst;
 	return (TRUE);
 }
 
@@ -95,18 +88,29 @@ void			draw_map(t_fdf *inst)
 		{
 			a = (t_vec3){col, -(line->values[col]), row};
 			if (!project(inst, a, &p))
+			{
+				col++;
 				continue ;
+			}
 			t_line *n_line = lst->next ? (lst->next)->content : NULL;
 			if (col + 1 < (inst->map)->cols)
 			{
 				a = (t_vec3){(col + 1), -(line->values[col + 1]), row};
-				project(inst, a, &p2);
+				if (!project(inst, a, &p2))
+				{
+					col++;
+					continue ;
+				}
 				draw_line(inst, p, p2);
 			}
 			if (col < (inst->map)->cols && n_line)
 			{
 				a = (t_vec3){col, -(n_line->values[col]), row + 1};
-				project(inst, a, &p2);
+				if (!project(inst, a, &p2))
+				{
+					col++;
+					continue ;
+				}
 				draw_line(inst, p, p2);
 			}
 			col++;

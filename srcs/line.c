@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:11:14 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 15:07:23 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 21:26:15 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ int rgb(float percent)
     return c_rgb(r, g, b);
 }
 
-
-
 void	draw_line(t_fdf *inst, t_zpixel p0, t_zpixel p1)
 {
 	t_pixel		delta;
@@ -61,10 +59,8 @@ void	draw_line(t_fdf *inst, t_zpixel p0, t_zpixel p1)
 			if (p1.x < 0 || p1.x > inst->size.x || p1.y < 0 || p1.y > inst->size.y)	
 				return ;
 		int z = fmax(p0.z_index, p1.z_index);
-		//printf("z -- > %d \n", z);
 		p0.color = rgb((float)z / (float)(inst->map->max + inst->map->min));
 		put_pixel(inst, p0);
-		//put_pixel(inst, p0, color);
 		if (p0.x == p1.x && p0.y == p1.y)
 			break;
 		e2 = err;

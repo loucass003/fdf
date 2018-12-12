@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 14:52:56 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/11 21:32:08 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int		key(int k, t_fdf *inst)
 {
 	t_vec3	incrt = (t_vec3){0, 0, 0};
 	t_vec3	incrr = (t_vec3){0, 0, 0};
-	const float		speed = 2;
+	const float		speed = 0.1;
 
 	if (k == KEY_ESC)
 	{
@@ -80,7 +80,7 @@ int		key(int k, t_fdf *inst)
 	if (k == KEY_J || k == KEY_L)
 		incrr.y = (k == KEY_J ? -0.05 : 0.05);
 	if (k == KEY_PAGE_U || k == KEY_PAGE_D)
-		inst->map->a += (k == KEY_PAGE_U ? 0.02 : -0.02);
+		inst->map->a += (k == KEY_PAGE_U ? 0.002 : -0.002);
 	ft_putnbr(k);
 	ft_putendl("");
 	incrt = ft_vec3_mul(incrt, (t_vec3){speed, speed, speed});
@@ -98,30 +98,16 @@ int		key(int k, t_fdf *inst)
 t_mat4	mat4_projection_perspective(float angle, float near, float far)
 {
 	const float	scale = 1 / tanf(angle * 0.5 * M_PI / 180);
-	const float	a = (-far + near) / (far - near);
-	const float	b = 2 * (far * near) / (far - near);
+	const float	a = -far / (far - near);
+	const float	b = -far * near / (far - near);
 	const t_mat4 perspective = ((t_mat4)((t_mat4_data) {
 		-scale, 0, 0, 0,
 		0, scale, 0, 0,
-		0, 0, a, -1,
-		0, 0, b, 0
+		0, 0, a, b,
+		0, 0, 1, 0
 	}));
-	return ft_mat4_mul(perspective, ft_mat4_scale((t_vec3){1, 1, 1}));
+	return perspective;
 }
-
-#define SQRT36 (0.70710678118)
-#define SQRT26 (0.57735026919)
-
-/*t_mat4	mat4_isometric()
-{
-	return ((t_mat4)(t_mat4_data) {
-		-SQRT36, 0, 0, -SQRT36,
-		1     , 1, 2, 0,
-		-SQRT26, SQRT26, SQRT26, 0,
-		0    , 0    , 1 , 0
-	});
-
-}*/
 
 int		main(int argc, char **argv)
 {
@@ -147,7 +133,7 @@ int		main(int argc, char **argv)
 	inst.img = mlx_new_image(inst.mlx, inst.size.x, inst.size.y);
 	t_cam camera;
 	camera.rotation = (t_vec3){/*-M_PI_2*/0, 0, 0};
-	camera.pos = (t_vec3){0, 0, -100};
+	camera.pos = (t_vec3){0, 0, 0};
 	t_mat4 matrix = ft_mat4_mul(
 		ft_mat4_rotation(camera.rotation), 
 		ft_mat4_translation(camera.pos)
@@ -155,7 +141,7 @@ int		main(int argc, char **argv)
 	camera.matrix = matrix;
 	inst.camera = &camera;
 	//inst.projection = mat4_isometric();
-	inst.projection = mat4_projection_perspective(120, 0.1, 100);
+	inst.projection = mat4_projection_perspective(70, 0.1, 100);
 	camera.matrix = ft_mat4_mul(inst.projection, matrix);
 
 	draw_map(&inst);
