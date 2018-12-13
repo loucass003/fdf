@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/30 21:15:45 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/12 15:10:58 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/12 21:35:00 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,5 +132,4 @@ void			draw_map(t_fdf *inst)
 		y++;
 	}
 	mlx_put_image_to_window(inst->mlx, inst->win, inst->img, 0, 0);
-}
-*/
+}*/

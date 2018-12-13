@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:02:19 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 13:22:52 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/13 02:26:16 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,14 @@ typedef enum	e_bool
 	LA_TETE_A_TOTO	= 0
 }				t_bool;
 
-typedef struct	s_line
-{
-	int			*values;
-	size_t		len;
-	int		min;
-	int		max;
-}				t_line;
-
 typedef struct	s_map
 {
-	t_list		*lines;
-	size_t		cols;
-	size_t		rows;
-	int		min;
-	int		max;
-	float		a;
+	int		*points;
+	int		z_factor;
+	int		max_height;
+	int		size;
+	int		cols;
+	int		rows;
 }				t_map;
 
 typedef struct	s_cam
@@ -50,6 +42,7 @@ typedef struct	s_cam
 	t_vec3		pos;
 	t_vec3		rotation;
 	t_mat4		matrix;
+	t_mat4		projection;
 }				t_cam;
 
 typedef struct	s_zpixel
@@ -60,18 +53,32 @@ typedef struct	s_zpixel
 	int		color;
 }				t_zpixel;
 
+typedef struct	s_img
+{
+	int		s_line;
+	int		s_pixel;
+	int		endian;
+	t_pixel	size;
+	void	*img_ptr;
+	char	*img_buf;
+}				t_img;
+
 typedef struct	s_fdf
 {
 	void		*mlx;
 	void		*win;
 	t_zpixel	*p_img;
-	void		*img;
+	t_img		*img;
 	t_pixel		size;
 	t_map		*map;
-	t_cam		*camera;
-	t_mat4		projection;
+	t_cam		camera;
 }				t_fdf;
 
+t_cam			init_camera(void);
+void			apply_matrix(t_cam *cam);
+t_map			*init_map(char	*file);
+
+t_img			*new_img(t_fdf *inst, t_pixel size);
 
 
 t_zpixel		zpixel(t_pixel p);
@@ -82,10 +89,7 @@ int				c_rgb(int r, int g, int b);
 
 t_bool			put_pixel(t_fdf *inst, t_zpixel p);
 void			draw_line(t_fdf *inst, t_zpixel p1, t_zpixel p2);
-void			draw_map(t_fdf *inst);
+int				draw_map(t_fdf *inst);
 
-t_map			*read_map(char *file);
-
-int				m_value(t_map *map, size_t col, size_t row);
 
 #endif

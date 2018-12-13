@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 21:32:08 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/13 02:24:52 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ int		key(int k, t_fdf *inst)
 	if (k == KEY_A || k == KEY_D)
 	{
 		incrt = (t_vec3){
-			.x = cosf(inst->camera->rotation.y),
-			.z = sin(inst->camera->rotation.y)
+			.x = cosf(inst->camera.rotation.y),
+			.z = sin(inst->camera.rotation.y)
 		};
 		if (k == KEY_D)
 			incrt = ft_vec3_inv(incrt);
@@ -66,9 +66,9 @@ int		key(int k, t_fdf *inst)
 	if (k == KEY_W || k == KEY_S)
 	{
 		incrt = (t_vec3){
-			sin(inst->camera->rotation.y) * cos(inst->camera->rotation.x),
-			-sin(inst->camera->rotation.x),
-			-cos(inst->camera->rotation.y) 
+			sin(inst->camera.rotation.y) * cos(inst->camera.rotation.x),
+			-sin(inst->camera.rotation.x),
+			-cos(inst->camera.rotation.y) 
 		};
 		if (k == KEY_W)
 			incrt = ft_vec3_inv(incrt);
@@ -80,33 +80,15 @@ int		key(int k, t_fdf *inst)
 	if (k == KEY_J || k == KEY_L)
 		incrr.y = (k == KEY_J ? -0.05 : 0.05);
 	if (k == KEY_PAGE_U || k == KEY_PAGE_D)
-		inst->map->a += (k == KEY_PAGE_U ? 0.002 : -0.002);
+		inst->map->z_factor += (k == KEY_PAGE_U ? 0.002 : -0.002);
 	ft_putnbr(k);
 	ft_putendl("");
 	incrt = ft_vec3_mul(incrt, (t_vec3){speed, speed, speed});
-	inst->camera->rotation = ft_vec3_add(inst->camera->rotation, incrr);
-	inst->camera->pos = ft_vec3_add(inst->camera->pos, incrt);
-	inst->camera->matrix = ft_mat4_mul(
-		ft_mat4_rotation(inst->camera->rotation),
-		ft_mat4_translation(inst->camera->pos)
-	);
-	inst->camera->matrix = ft_mat4_mul(inst->projection, inst->camera->matrix);
+	inst->camera.rotation = ft_vec3_add(inst->camera.rotation, incrr);
+	inst->camera.pos = ft_vec3_add(inst->camera.pos, incrt);
+	apply_matrix(&inst->camera);
 	draw_map(inst);
 	return (0);
-}
-
-t_mat4	mat4_projection_perspective(float angle, float near, float far)
-{
-	const float	scale = 1 / tanf(angle * 0.5 * M_PI / 180);
-	const float	a = -far / (far - near);
-	const float	b = -far * near / (far - near);
-	const t_mat4 perspective = ((t_mat4)((t_mat4_data) {
-		-scale, 0, 0, 0,
-		0, scale, 0, 0,
-		0, 0, a, b,
-		0, 0, 1, 0
-	}));
-	return perspective;
 }
 
 int		main(int argc, char **argv)
@@ -115,37 +97,22 @@ int		main(int argc, char **argv)
 
 	if (argc != 2)
 		return (0);
-	if (!(inst.map = read_map(argv[1])))
+	if (!(inst.map = init_map(argv[1])))
 	{
 		ft_putstr("Error: impossible de lire la map\n");
 		return (0);
 	}
 	inst.size = (t_pixel){ 1000, 1000 };
-	if (!(inst.p_img = (t_zpixel*)ft_memalloc(sizeof(t_zpixel) * (inst.size.x * inst.size.y))))
-	{
-		ft_putstr("Error: impossible d'alouer le buffer\n");
-		return (0);
-	}
-	printf("(min -> %d, max -> %d)  (w -> %zu h -> %zu)", inst.map->min, inst.map->max, inst.map->cols, inst.map->rows);
+	printf("(max_height -> %d)  (w -> %d h -> %d)\n", inst.map->max_height, inst.map->cols, inst.map->rows);
 
 	inst.mlx = mlx_init();
-	inst.win = mlx_new_window(inst.mlx, inst.size.x, inst.size.y, "test");
-	inst.img = mlx_new_image(inst.mlx, inst.size.x, inst.size.y);
-	t_cam camera;
-	camera.rotation = (t_vec3){/*-M_PI_2*/0, 0, 0};
-	camera.pos = (t_vec3){0, 0, 0};
-	t_mat4 matrix = ft_mat4_mul(
-		ft_mat4_rotation(camera.rotation), 
-		ft_mat4_translation(camera.pos)
-	);
-	camera.matrix = matrix;
-	inst.camera = &camera;
-	//inst.projection = mat4_isometric();
-	inst.projection = mat4_projection_perspective(70, 0.1, 100);
-	camera.matrix = ft_mat4_mul(inst.projection, matrix);
+	inst.win = mlx_new_window(inst.mlx, inst.size.x, inst.size.y, "|| FDF ||");
+	inst.img = new_img(&inst, inst.size);
+	inst.camera = init_camera();
 
 	draw_map(&inst);
 	mlx_hook(inst.win, 2, 1, key, &inst);
+	mlx_expose_hook(inst.win, &draw_map, &inst);
 	mlx_loop(inst.mlx);
 	return (0);
 }

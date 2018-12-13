@@ -6,7 +6,7 @@
 #    By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 14:49:27 by llelievr          #+#    #+#              #
-#    Updated: 2018/12/10 17:42:12 by llelievr         ###   ########.fr        #
+#    Updated: 2018/12/13 00:51:38 by llelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,10 +23,10 @@ MLX_INC	= -I /usr/local/include
 MLX_LNK	= -L /usr/local/lib
 
 # ft library
-FT		= ./includes/libft/
+FT		= ./libft/
 FT_LIB	= $(addprefix $(FT), libft.a)
-FT_INC	= -I ./includes/libft/includes
-FT_LNK	= -L ./includes/libft -l ft
+FT_INC	= -I ./libft/includes
+FT_LNK	= -L ./libft -l ft
 FT_TASK = all;
 
 # directories
@@ -57,7 +57,7 @@ $(FT_LIB):
 $(NAME): $(OBJ)
 	$(CC) $(OBJ) $(MLX_LNK) $(FT_LNK) -lm -o $(NAME)
 
-dev: CFLAGS+=-g
+dev: CFLAGS =-g
 dev: FT_TASK = dev 
 dev: re
 

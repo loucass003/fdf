@@ -6,110 +6,97 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 21:31:15 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/11 21:25:15 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/13 01:23:12 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 #include <fcntl.h>
+#include <stdlib.h>
 
-void		del_line(void *e, size_t s)
+static size_t	count_words(const char *s, char c)
 {
-	(void)s;
-	ft_memdel(&e);
+	size_t		len;
+
+	len = !(*s == c);
+	while (*++s)
+		if (s[-1] == c && *s != c)
+			len++;
+	return (len);
 }
 
-void		clean(t_map **map, t_line **content, char **line)
+static int		ft_atoip(char **str)
 {
-	if (map && (*map)->lines)
-		ft_lstdel(&((*map)->lines), &del_line);
-	ft_memdel((void **)map);
-	ft_memdel((void **)content);
-	ft_memdel((void **)line);
-}
+	char		*o;
+	int			result;
+	char		mod;
 
-t_line		*read_line(char **values)
-{
-	t_line	*line;
-	size_t	len;
-
-	if (!(line = (t_line*)malloc(sizeof(t_line))))
-		return (NULL);
-	len = 0;
-	while (values[len])
-		len++;
-	if (!(line->values = (int *)malloc(sizeof(int) * len)))
+	o = *str;
+	while (**str == ' ' || (**str >= '\t' && **str <= '\r'))
+		(*str)++;
+	result = 0;
+	mod = **str == '-' || **str == '+' ? *(*str)++ == '-' : 0;
+	if (**str >= '0' && **str <= '9')
+		while (**str >= '0' && **str <= '9')
+			result = result * 10 + *(*str)++ - '0';
+	else
 	{
-		ft_memdel((void **)line);
-		return (NULL);
+		*str = o;
+		return (0);
 	}
-	line->len = len;
-	line->max = 0;
-	line->min = 0;
-	while (len-- > 0)
-	{
-		line->values[len] = ft_atoi(values[len]);
-		line->max = fmax(line->values[len], line->max);
-		line->min = fmin(line->values[len], line->min);
-	}
-	return (line);
+	return (mod ? -result : result);
 }
 
-t_map		*read_map(char *file)
+static void		*free_ret(void *addr)
 {
-	int		fd;
-	char	*line;
-	t_map	*map;
-	t_line	*content;
+	free(addr);
+	return (NULL);
+}
+
+static int 		*parse_file(const int fd, int *size, int *cols, int *max_height)
+{
+	char		*line[2];
+	int			i;
+	int			*arr;
+
+	*cols = 0;
+	*size = 0;
+	arr = NULL;
+	while (ft_gnl(fd, line) > 0)
+	{
+		if (!*cols)
+			*cols = count_words(*line, ' ');
+		line[1] = line[0];
+		arr = ft_realloc(arr, *size * sizeof(int), (*size + *cols) * sizeof(int));
+		i = -1;
+		while (++i < *cols)
+			if (!**line)
+				return (free_ret(arr));
+			else if (ft_abs(arr[*size + i] = ft_atoip(line)) > *max_height)
+				*max_height = ft_abs(arr[*size + i]);
+		if (**line)
+			return (free_ret(arr));
+		*size += *cols;
+		free(line[1]);
+	}
+	return (arr);
+}
+
+t_map			*init_map(char	*file)
+{
+	int			fd;
+	t_map		*map;
 
 	if ((fd = open(file, O_RDONLY)) == -1)
 		return (NULL);
 	if (!(map = (t_map *)malloc(sizeof(t_map))))
 		return (NULL);
-	map->lines = NULL;
-	map->cols = 0;
-	map->rows = 0;
-	map->min = 0;
-	map->max = 0;
-	while (ft_gnl(fd, &line) > 0)
+	if (!(map->points = parse_file(fd, &map->size, &map->cols, &map->max_height)) || map->size == 0)
 	{
-		content = read_line(ft_strsplit(line, ' '));
-		if (!content || (map->cols > 0 && map->cols != content->len))
-		{
-			clean(&map, &content, &line);
-			return (NULL);
-		}
-		map->max = fmax(map->max, content->max);
-		map->min = fmin(map->min, content->min);
-		map->cols = content->len;
-		if (!map->lines)
-			map->lines = ft_lstnew(content, sizeof(t_line));
-		else
-			ft_lstput(&(map->lines), ft_lstnew(content, sizeof(t_line)));
-		clean(NULL, &content, &line);
-		if (!map->lines)
-		{
-			clean(&map, NULL, NULL);
-			return (NULL);
-		}
-		map->rows++;
-	}
-	if (map->rows == 0)
+		ft_memdel((void **)map);
 		return (NULL);
-	map->a = ((float)map->cols / map->rows) / ((float)ft_abs(map->max - map->min) * 10);
+	}
+	map->rows = map->size / map->cols;
+	map->z_factor = 1;
 	return (map);
-}
-
-int		m_value(t_map *map, size_t col, size_t row)
-{
-	t_list	*line;
-	size_t	r;
-
-	if (col > map->cols || row > map->rows)
-		return (0);
-	line = map->lines;
-	r = 0;
-	while (r++ < row)
-		line = line->next;
-	return (((t_line *)line->content)->values[col]);
 }

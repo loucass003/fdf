@@ -6,11 +6,47 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/07 15:35:04 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/07 20:30:39 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/13 03:26:52 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+static t_mat4	mat4_projection_perspective(float angle, float near, float far)
+{
+	const float	scale = 1 / tanf(angle * 0.5 * M_PI / 180);
+	const float	a = -far / (far - near);
+	const float	b = -far * near / (far - near);
+
+	return ((t_mat4)((t_mat4_data) {
+		-scale, 0, 0, 0,
+		0, scale, 0, 0,
+		0, 0, a, b,
+		0, 0, 1, 0
+	}));
+}
+
+t_cam		init_camera(void)
+{
+	t_cam camera;
+	
+	camera.rotation = (t_vec3){0, 0, 0};
+	camera.pos = (t_vec3){0, 0, -2};
+	camera.projection = mat4_projection_perspective(70, 0.1, 100);
+	apply_matrix(&camera);
+	return (camera);
+}
+
+void		apply_matrix(t_cam *cam)
+{
+	cam->matrix = ft_mat4_mul(
+		cam->projection,
+		ft_mat4_mul(
+			ft_mat4_rotation(cam->rotation),
+			ft_mat4_translation(cam->pos)
+		)
+	);
+}
 
 t_mat4		cam_view(t_cam *cam, float pitch, float yaw)
 {
