@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/15 01:23:08 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 01:48:25 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 05:27:36 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ int				key_event(int k, t_fdf *inst)
 	{
 		exit(0);//TODO exit -> clear all vars;
 	}
+	ft_putnbr(k);
+	ft_putendl("");
 	translations(k, inst, &incrt);
 	rotations(k, inst, &incrr);
 	misc(k, inst);

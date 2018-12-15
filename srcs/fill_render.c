@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/30 21:15:45 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 04:59:57 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 05:31:49 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static t_bool	project(t_fdf *inst, t_vec3 p, t_vec3 *raster)
 	p = ft_vec3_div(p, (t_vec3){inst->map->cols, 1, inst->map->rows});
 	vec = ft_mat4_mulv(inst->camera.matrix, p);
 	if (vec.x < -2 || vec.x > 2 || vec.y < -2 || vec.y > 2
-		|| (inst->perspective_mode && (vec.z < -1 || vec.z < 0.5)))
+		|| (inst->perspective_mode && (vec.z < -1)))
 		return (FALSE);
 	*raster = ((t_vec3){
 		((vec.x + 1) * 0.5 * inst->size.x),

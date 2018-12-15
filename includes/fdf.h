@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:02:19 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 01:55:46 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 05:31:07 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@
 	#define KEY_SPACE (32)
 	#define KEY_PAGE_U (65365)
 	#define KEY_PAGE_D (65366)
-	#define KEY_R (0)
-	#define KEY_C (0)
+	#define KEY_R (114)
+	#define KEY_C (99)
 #endif
 
 typedef enum	e_bool
