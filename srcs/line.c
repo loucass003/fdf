@@ -6,72 +6,35 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:11:14 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/13 01:19:16 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 01:53:31 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-#include <stdio.h>
 
-float	ft_absf(float f)
+void	draw_line(t_img *img, t_zpixel p0, t_zpixel p1, int c[2])
 {
-	return (f < 0 ? -f : f);
-}
-
-int rgb(float percent)
-{
-	//printf("%f\n", percent);
-	if (percent < 0)
-	{
-		int p = ft_absf(percent);
-
-		int r = (0 + (78 - 0) * p);
-		int g = (255 + (46 - 255) * p);
-		int b = (0 + (40 - 0) * p);
-		return (c_rgb(r, g, b));
-	}
-	if (percent == 0)
-		return (c_rgb(70,130, 180));
-	
-	int r = (0 + (255 - 0) * percent);
-    int g = (255 + (0 - 255) * percent);
-    int b = (0 + (0 - 0) * percent);
-
-    return c_rgb(r, g, b);
-}
-
-void	draw_line(t_fdf *inst, t_zpixel p0, t_zpixel p1)
-{
-	t_pixel		delta;
+	t_pixel		d;
 	t_pixel		s;
-	int 		e2;
-	int			err;
+	int			e[2];
 
-	delta = (t_pixel){
-		ft_abs(p1.x - p0.x),
-		ft_abs(p1.y - p0.y)
-	};
-	s = (t_pixel){(p0.x < p1.x ? 1 : -1), (p0.y < p1.y ? 1 : -1)};
-	err = (delta.x > delta.y ? delta.x : -delta.y) / 2;
-	while(!TRUENT)
+	d = (t_pixel){ ft_abs(p1.x - p0.x), ft_abs(p1.y - p0.y) };
+	s = (t_pixel){ (p0.x < p1.x ? 1 : -1), (p0.y < p1.y ? 1 : -1) };
+	e[0] = (d.x > d.y ? d.x : -d.y) / 2;
+	while (p0.x != p1.x || p0.y != p1.y)
 	{
-		if (p0.x < 0 || p0.x > inst->size.x || p0.y < 0 || p0.y > inst->size.y)
-			if (p1.x < 0 || p1.x > inst->size.x || p1.y < 0 || p1.y > inst->size.y)	
-				return ;
-		//int z = fmax(p0.z_index, p1.z_index);
-		//p0.color = rgb((float)z / (float)(inst->map->max + inst->map->min));
-		put_pixel(inst, p0);
-		if (p0.x == p1.x && p0.y == p1.y)
-			break;
-		e2 = err;
-		if (e2 > -delta.x)
+		p0.z_index = fmax(p0.z_index, p1.z_index);
+		put_pixel(img, p0, c_gradient(c[0], c[1], 1 - (d.x > d.y ? (p1.x - p0.x)
+		* s.x / (double)d.x : (p1.y - p0.y) * s.y / (double)d.y)));
+		e[1] = e[0];
+		if (e[1] > -d.x)
 		{
-			err -= delta.y;
+			e[0] -= d.y;
 			p0.x += s.x;
 		}
-		if (e2 < delta.y)
+		if (e[1] < d.y)
 		{
-			err += delta.x;
+			e[0] += d.x;
 			p0.y += s.y;
 		}
 	}

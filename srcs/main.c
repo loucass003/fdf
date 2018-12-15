@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/13 02:24:52 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 02:11:43 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,80 +14,14 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#ifndef __linux__
-	#define KEY_ESC (53)
-	#define KEY_W (13)
-	#define KEY_A (0)
-	#define KEY_S (1)
-	#define KEY_D (2)
-	#define KEY_I (34)
-	#define KEY_J (38)
-	#define KEY_K (40)
-	#define KEY_L (37)
-	#define KEY_SHIFT (257)
-	#define KEY_SPACE (49)
-	#define KEY_PAGE_U (116)
-	#define KEY_PAGE_D (121)
-#else
-	#define KEY_ESC (65307)
-	#define KEY_W (119)
-	#define KEY_A (97)
-	#define KEY_S (115)
-	#define KEY_D (100)
-	#define KEY_I (105)
-	#define KEY_J (106)
-	#define KEY_K (107)
-	#define KEY_L (108)
-	#define KEY_SHIFT (65505)
-	#define KEY_SPACE (32)
-	#define KEY_PAGE_U (65365)
-	#define KEY_PAGE_D (65366)
-#endif
-
-int		key(int k, t_fdf *inst)
+int		draw_map(t_fdf *inst)
 {
-	t_vec3	incrt = (t_vec3){0, 0, 0};
-	t_vec3	incrr = (t_vec3){0, 0, 0};
-	const float		speed = 0.1;
-
-	if (k == KEY_ESC)
-	{
-		exit(0);//TODO exit -> clear all vars;
-	}
-	if (k == KEY_A || k == KEY_D)
-	{
-		incrt = (t_vec3){
-			.x = cosf(inst->camera.rotation.y),
-			.z = sin(inst->camera.rotation.y)
-		};
-		if (k == KEY_D)
-			incrt = ft_vec3_inv(incrt);
-	}
-	if (k == KEY_W || k == KEY_S)
-	{
-		incrt = (t_vec3){
-			sin(inst->camera.rotation.y) * cos(inst->camera.rotation.x),
-			-sin(inst->camera.rotation.x),
-			-cos(inst->camera.rotation.y) 
-		};
-		if (k == KEY_W)
-			incrt = ft_vec3_inv(incrt);
-	}
-	if (k == KEY_SHIFT || k == KEY_SPACE)
-		incrt.y = (k == KEY_SHIFT ? -1 : 1);
-	if (k == KEY_I || k == KEY_K)
-		incrr.x = (k == KEY_I ? 0.05 : -0.05);
-	if (k == KEY_J || k == KEY_L)
-		incrr.y = (k == KEY_J ? -0.05 : 0.05);
-	if (k == KEY_PAGE_U || k == KEY_PAGE_D)
-		inst->map->z_factor += (k == KEY_PAGE_U ? 0.002 : -0.002);
-	ft_putnbr(k);
-	ft_putendl("");
-	incrt = ft_vec3_mul(incrt, (t_vec3){speed, speed, speed});
-	inst->camera.rotation = ft_vec3_add(inst->camera.rotation, incrr);
-	inst->camera.pos = ft_vec3_add(inst->camera.pos, incrt);
-	apply_matrix(&inst->camera);
-	draw_map(inst);
+	refresh_img(inst->img);
+	if (inst->grid_mode)
+		draw_grid_map(inst);
+	else
+		draw_filled_map(inst);
+	mlx_put_image_to_window(inst->mlx, inst->win, inst->img->img_ptr, 0, 0);
 	return (0);
 }
 
@@ -103,15 +37,14 @@ int		main(int argc, char **argv)
 		return (0);
 	}
 	inst.size = (t_pixel){ 1000, 1000 };
-	printf("(max_height -> %d)  (w -> %d h -> %d)\n", inst.map->max_height, inst.map->cols, inst.map->rows);
-
+	inst.grid_mode = TRUE;
+	inst.perspective_mode = TRUE;
 	inst.mlx = mlx_init();
 	inst.win = mlx_new_window(inst.mlx, inst.size.x, inst.size.y, "|| FDF ||");
 	inst.img = new_img(&inst, inst.size);
-	inst.camera = init_camera();
-
+	inst.camera = init_camera(&inst);
 	draw_map(&inst);
-	mlx_hook(inst.win, 2, 1, key, &inst);
+	mlx_hook(inst.win, 2, 1, key_event, &inst);
 	mlx_expose_hook(inst.win, &draw_map, &inst);
 	mlx_loop(inst.mlx);
 	return (0);

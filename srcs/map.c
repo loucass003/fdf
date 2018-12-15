@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 21:31:15 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/13 01:23:12 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 01:09:03 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static void		*free_ret(void *addr)
 	return (NULL);
 }
 
-static int 		*parse_file(const int fd, int *size, int *cols, int *max_height)
+static int		*parse_file(const int fd, int *size, int *cols, int *max_height)
 {
 	char		*line[2];
 	int			i;
@@ -67,7 +67,7 @@ static int 		*parse_file(const int fd, int *size, int *cols, int *max_height)
 		if (!*cols)
 			*cols = count_words(*line, ' ');
 		line[1] = line[0];
-		arr = ft_realloc(arr, *size * sizeof(int), (*size + *cols) * sizeof(int));
+		arr = ft_realloc(arr, *size * 4, (*size + *cols) * 4);
 		i = -1;
 		while (++i < *cols)
 			if (!**line)
@@ -82,7 +82,7 @@ static int 		*parse_file(const int fd, int *size, int *cols, int *max_height)
 	return (arr);
 }
 
-t_map			*init_map(char	*file)
+t_map			*init_map(char *file)
 {
 	int			fd;
 	t_map		*map;
@@ -91,12 +91,11 @@ t_map			*init_map(char	*file)
 		return (NULL);
 	if (!(map = (t_map *)malloc(sizeof(t_map))))
 		return (NULL);
-	if (!(map->points = parse_file(fd, &map->size, &map->cols, &map->max_height)) || map->size == 0)
-	{
-		ft_memdel((void **)map);
-		return (NULL);
-	}
+	map->max_height = 0;
+	if (!(map->points = parse_file(fd, &map->size, &map->cols,
+	&map->max_height)) || map->size == 0)
+		return (free_ret(map));
 	map->rows = map->size / map->cols;
-	map->z_factor = 1;
+	map->z_factor = (float)ft_absf(map->max_height / 10) / map->size;
 	return (map);
 }

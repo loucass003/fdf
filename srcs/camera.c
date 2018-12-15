@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/07 15:35:04 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/13 03:26:52 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 01:04:43 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,52 +22,47 @@ static t_mat4	mat4_projection_perspective(float angle, float near, float far)
 		-scale, 0, 0, 0,
 		0, scale, 0, 0,
 		0, 0, a, b,
-		0, 0, 1, 0
-	}));
+		0, 0, 1, 0}));
 }
 
-t_cam		init_camera(void)
+t_cam			init_camera(t_fdf *inst)
 {
-	t_cam camera;
-	
-	camera.rotation = (t_vec3){0, 0, 0};
-	camera.pos = (t_vec3){0, 0, -2};
-	camera.projection = mat4_projection_perspective(70, 0.1, 100);
-	apply_matrix(&camera);
+	t_cam	camera;
+
+	if (inst->perspective_mode)
+	{
+		camera.rotation = (t_vec3){ -M_PI_4, 0, 0 };
+		camera.pos = (t_vec3){ 0, 1, -.8 };
+		camera.projection = mat4_projection_perspective(70, 0.1, 100);
+	}
+	else
+	{
+		camera.rotation = (t_vec3){ -M_PI_2, 0, 0 };
+		camera.pos = (t_vec3){ 0, 0, -1 };
+		camera.projection = ft_mat4_identity();
+		camera.projection.a[0][0] = -1;
+		camera.projection.a[2][2] = -1;
+		camera.projection.a[3][3] = -1;
+	}
+	apply_matrix(inst, &camera);
 	return (camera);
 }
 
-void		apply_matrix(t_cam *cam)
+void			apply_matrix(t_fdf *inst, t_cam *cam)
 {
-	cam->matrix = ft_mat4_mul(
-		cam->projection,
-		ft_mat4_mul(
-			ft_mat4_rotation(cam->rotation),
-			ft_mat4_translation(cam->pos)
-		)
-	);
-}
+	t_mat4	a;
+	t_mat4	b;
+	float	z;
 
-t_mat4		cam_view(t_cam *cam, float pitch, float yaw)
-{
-	const t_vec3	v_yaw = (t_vec3){cosf(yaw), sinf(yaw), 0};
-	const t_vec3	v_pitch = (t_vec3){cosf(pitch), sinf(pitch), 0};
-	const t_vec3	xaxis = (t_vec3){v_yaw.x, 0, -v_yaw.y};
-	const t_vec3	yaxis = (t_vec3){
-		v_yaw.y * v_pitch.y,
-		v_pitch.x, 
-		v_yaw.x * v_pitch.y
-	};
-	const t_vec3	zaxis = (t_vec3){
-		v_yaw.y * v_pitch.x, 
-		-v_pitch.y,
-		v_pitch.x * v_yaw.x
-	};
-
-	return ((t_mat4)((t_mat4_data){
-		xaxis.x, xaxis.y, xaxis.z, ft_vec3_dot(xaxis, cam->pos),
-		yaxis.x, yaxis.y, yaxis.z, ft_vec3_dot(yaxis, cam->pos),
-		zaxis.z, zaxis.y, zaxis.z, ft_vec3_dot(zaxis, cam->pos),
-		0, 0, 0, 1
-	}));
+	a = ft_mat4_rotation(cam->rotation);
+	b = ft_mat4_translation(cam->pos);
+	cam->matrix = ft_mat4_mul(cam->projection,
+		ft_mat4_mul((inst->perspective_mode ? a : b),
+		(inst->perspective_mode ? b : a)));
+	if (!inst->perspective_mode)
+	{
+		z = -cam->pos.z;
+		cam->matrix = ft_mat4_mul(cam->matrix,
+			ft_mat4_scale((t_vec3){ z, z, z }));
+	}
 }

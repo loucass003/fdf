@@ -6,7 +6,7 @@
 #    By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 14:49:27 by llelievr          #+#    #+#              #
-#    Updated: 2018/12/13 00:51:38 by llelievr         ###   ########.fr        #
+#    Updated: 2018/12/15 04:02:10 by llelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ OBJ		= $(addprefix $(OBJDIR),$(SRC:.c=.o))
 
 # compiler
 CC		= gcc
-CFLAGS	= -Wall -Werror -Wextra 
+CFLAGS	= -Wall -Werror -Wextra -flto -O3 -Ofast -ffast-math
 
 # mlx library
 MLX_INC	= -I /usr/local/include
