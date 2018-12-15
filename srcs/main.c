@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 02:11:43 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 05:45:41 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ int		main(int argc, char **argv)
 	inst.img = new_img(&inst, inst.size);
 	inst.camera = init_camera(&inst);
 	draw_map(&inst);
+	mlx_do_key_autorepeaton(inst.mlx);
 	mlx_hook(inst.win, 2, 1, key_event, &inst);
 	mlx_expose_hook(inst.win, &draw_map, &inst);
+	mlx_loop_hook (inst.mlx, &draw_map, &inst);
 	mlx_loop(inst.mlx);
 	return (0);
 }
