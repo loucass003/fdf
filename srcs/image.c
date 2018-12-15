@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 00:36:51 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 01:05:37 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 19:37:30 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,12 @@ t_img			*new_img(t_fdf *inst, t_pixel size)
 	img->img_ptr = mlx_new_image(inst->mlx, size.x, size.y);
 	img->img_buf = mlx_get_data_addr(img->img_ptr, &img->s_pixel, &img->s_line,
 		&img->endian);
-	img->z_buff = (float *)malloc(sizeof(float) *
-		(inst->size.x * inst->size.y));
+	if(!(img->z_buff = (float *)malloc(sizeof(float) * 
+		(inst->size.x * inst->size.y))))
+	{
+		clear_img(inst, img);
+		return (NULL);
+	}
 	img->size = size;
 	return (img);
 }
@@ -33,6 +37,16 @@ t_img			*refresh_img(t_img *img)
 		ft_bzero(img->img_buf, (img->size.y * img->s_line));
 	ft_memset(img->z_buff, 1000, img->size.x * img->size.y * sizeof(float));
 	return (img);
+}
+
+void			clear_img(t_fdf *inst, t_img *img)
+{
+	if (!img)
+		return ;
+	mlx_destroy_image(inst->mlx, img->img_ptr);
+	if (img->z_buff)
+		ft_memdel((void **)&img->z_buff);
+	ft_memdel((void **)&img);
 }
 
 t_bool			put_pixel(t_img *img, t_zpixel p, int c)

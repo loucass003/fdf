@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:02:19 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 05:31:07 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 19:38:12 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ typedef struct	s_fdf
 }				t_fdf;
 
 int				key_event(int k, t_fdf *inst);
+int				close_main(t_fdf *inst, char *msg);
 
 t_cam			init_camera(t_fdf *inst);
 void			apply_matrix(t_fdf *inst, t_cam *cam);
@@ -118,6 +119,7 @@ t_map			*init_map(char	*file);
 t_img			*new_img(t_fdf *inst, t_pixel size);
 t_img			*refresh_img(t_img *img);
 t_bool			put_pixel(t_img *img, t_zpixel p, int c);
+void			clear_img(t_fdf *inst, t_img *img);
 
 t_zpixel		zpixel(t_pixel p);
 

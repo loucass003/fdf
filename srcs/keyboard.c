@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/15 01:23:08 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 05:46:13 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/15 19:38:10 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,7 @@ int				key_event(int k, t_fdf *inst)
 	incrr = (t_vec3){0, 0, 0};
 	incrt = (t_vec3){0, 0, 0};
 	if (k == KEY_ESC)
-	{
-		exit(0);//TODO exit -> clear all vars;
-	}
+		return (close_main(inst, "Bye Bye."));
 	translations(k, inst, &incrt);
 	rotations(k, inst, &incrr);
 	misc(k, inst);
