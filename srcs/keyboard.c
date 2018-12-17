@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/15 01:23:08 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 19:38:10 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/17 13:33:07 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void		translations(int k, t_fdf *inst, t_vec3 *incrt)
 	if (k == KEY_A || k == KEY_D)
 	{
 		*incrt = (t_vec3){ .x = cosf(inst->camera.rotation.y),
-		.z = sin(inst->camera.rotation.y) };
+		.z = sinf(inst->camera.rotation.y) };
 		if (!inst->perspective_mode)
 			*incrt = (t_vec3){ .x = 5 };
 		if (k == KEY_D)
@@ -25,8 +25,8 @@ static void		translations(int k, t_fdf *inst, t_vec3 *incrt)
 	}
 	if (k == KEY_W || k == KEY_S)
 	{
-		*incrt = (t_vec3){ sin(inst->camera.rotation.y),
-		-sin(inst->camera.rotation.x), -cos(inst->camera.rotation.y) };
+		*incrt = (t_vec3){ sinf(inst->camera.rotation.y),
+		-sinf(inst->camera.rotation.x), -cosf(inst->camera.rotation.y) };
 		if (!inst->perspective_mode)
 			*incrt = (t_vec3){ .z = 5 };
 		if (k == KEY_W)
@@ -75,6 +75,5 @@ int				key_event(int k, t_fdf *inst)
 	inst->camera.rotation = ft_vec3_add(inst->camera.rotation, incrr);
 	inst->camera.pos = ft_vec3_add(inst->camera.pos, incrt);
 	apply_matrix(inst, &inst->camera);
-//	draw_map(inst);
 	return (0);
 }

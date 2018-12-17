@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 19:54:32 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/17 14:57:53 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,16 @@ int		draw_map(t_fdf *inst)
 
 int		close_main(t_fdf *inst, char *msg)
 {
+	if (!inst)
+		return (0);
 	if (inst->map)
-		ft_memdel((void **)&inst->map->points);
-	ft_memdel((void **)&inst->map);
-	clear_img(inst, inst->img);
-	mlx_destroy_window(inst->mlx, inst->win);
+		ft_memdel((void **)inst->map->points);
+	ft_memdel((void **)inst->map);
+	if (inst->mlx && inst->win)
+	{
+		clear_img(inst, inst->img);
+		mlx_destroy_window(inst->mlx, inst->win);
+	}
 	ft_putendl(msg);
 	exit(0);
 	return (0);
@@ -43,6 +48,8 @@ int		main(int argc, char **argv)
 
 	if (argc != 2)
 		return (0);
+	inst.win = NULL;
+	inst.mlx = NULL;
 	if (!(inst.map = init_map(argv[1])))
 		return (close_main(&inst, "Error: impossible de lire la map"));
 	inst.size = (t_pixel){ 1000, 1000 };
@@ -53,12 +60,11 @@ int		main(int argc, char **argv)
 	inst.grid_mode = TRUE;
 	inst.perspective_mode = TRUE;
 	inst.camera = init_camera(&inst);
-	draw_map(&inst);
 	mlx_do_key_autorepeaton(inst.mlx);
 	mlx_hook(inst.win, 2, 1, key_event, &inst);
 	mlx_hook(inst.win, 17, 0, close_main, &inst);
-	mlx_expose_hook(inst.win, &draw_map, &inst);
-	mlx_loop_hook (inst.mlx, &draw_map, &inst);
+	mlx_expose_hook(inst.win, draw_map, &inst);
+	mlx_loop_hook(inst.mlx, draw_map, &inst);
 	mlx_loop(inst.mlx);
 	return (close_main(&inst, "Bye Bye."));
 }

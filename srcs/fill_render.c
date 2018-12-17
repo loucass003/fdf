@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/30 21:15:45 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 05:39:46 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/17 13:30:10 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 static t_bool	project(t_fdf *inst, t_vec3 p, t_vec3 *raster)
 {
 	t_vec3	vec;
+
 	p = ft_vec3_sub(p, (t_vec3){inst->map->cols * .5, 0, inst->map->rows * .5});
 	p = ft_vec3_mul(p, (t_vec3){1, -inst->map->z_factor, 1});
 	p = ft_vec3_div(p, (t_vec3){inst->map->cols, 1, inst->map->rows});

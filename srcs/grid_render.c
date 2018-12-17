@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/14 00:45:59 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 05:51:45 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/17 14:18:00 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,10 @@ void			draw_grid_map(t_fdf *inst)
 	t_pixel		p;
 
 	p = (t_pixel){-1, -1};
-	while (++p.y < inst->map->rows - 1)
+	while (++p.y < inst->map->rows)
 	{
 		p.x = -1;
-		while (++p.x < inst->map->cols - 1)
+		while (++p.x < inst->map->cols)
 			do_lines(inst, p);
 	}
 }

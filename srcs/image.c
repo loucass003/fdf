@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 00:36:51 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 19:37:30 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/17 15:03:59 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_img			*new_img(t_fdf *inst, t_pixel size)
 	img->img_ptr = mlx_new_image(inst->mlx, size.x, size.y);
 	img->img_buf = mlx_get_data_addr(img->img_ptr, &img->s_pixel, &img->s_line,
 		&img->endian);
-	if(!(img->z_buff = (float *)malloc(sizeof(float) * 
+	if (!(img->z_buff = (float *)malloc(sizeof(float) *
 		(inst->size.x * inst->size.y))))
 	{
 		clear_img(inst, img);

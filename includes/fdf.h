@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 15:02:19 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/15 19:38:12 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/17 13:11:04 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,47 +18,47 @@
 # include "stdlib.h"
 # include "math.h"
 
-#ifndef __linux__
-	#define KEY_ESC (53)
-	#define KEY_W (13)
-	#define KEY_A (0)
-	#define KEY_S (1)
-	#define KEY_D (2)
-	#define KEY_I (34)
-	#define KEY_J (38)
-	#define KEY_K (40)
-	#define KEY_L (37)
-	#define KEY_SHIFT (257)
-	#define KEY_SPACE (49)
-	#define KEY_PAGE_U (116)
-	#define KEY_PAGE_D (121)
-	#define KEY_R (15)
-	#define KEY_C (8)
-#else
-	#define KEY_ESC (65307)
-	#define KEY_W (119)
-	#define KEY_A (97)
-	#define KEY_S (115)
-	#define KEY_D (100)
-	#define KEY_I (105)
-	#define KEY_J (106)
-	#define KEY_K (107)
-	#define KEY_L (108)
-	#define KEY_SHIFT (65505)
-	#define KEY_SPACE (32)
-	#define KEY_PAGE_U (65365)
-	#define KEY_PAGE_D (65366)
-	#define KEY_R (114)
-	#define KEY_C (99)
-#endif
+# ifndef __linux__
+#  define KEY_ESC (53)
+#  define KEY_W (13)
+#  define KEY_A (0)
+#  define KEY_S (1)
+#  define KEY_D (2)
+#  define KEY_I (34)
+#  define KEY_J (38)
+#  define KEY_K (40)
+#  define KEY_L (37)
+#  define KEY_SHIFT (257)
+#  define KEY_SPACE (49)
+#  define KEY_PAGE_U (116)
+#  define KEY_PAGE_D (121)
+#  define KEY_R (15)
+#  define KEY_C (8)
+# else
+#  define KEY_ESC (65307)
+#  define KEY_W (119)
+#  define KEY_A (97)
+#  define KEY_S (115)
+#  define KEY_D (100)
+#  define KEY_I (105)
+#  define KEY_J (106)
+#  define KEY_K (107)
+#  define KEY_L (108)
+#  define KEY_SHIFT (65505)
+#  define KEY_SPACE (32)
+#  define KEY_PAGE_U (65365)
+#  define KEY_PAGE_D (65366)
+#  define KEY_R (114)
+#  define KEY_C (99)
+# endif
 
 typedef enum	e_bool
 {
-	TRUE			= 1,
-	FALSE			= 0,
-	TRUENT			= 0,
-	FALSENT			= 1,
-	LA_TETE_A_TOTO	= 0
+	TRUE = 1,
+	FALSE = 0,
+	TRUENT = 0,
+	FALSENT = 1,
+	LA_TETE_A_TOTO = 0
 }				t_bool;
 
 typedef struct	s_map
