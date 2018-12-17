@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/17 14:57:53 by llelievr         ###   ########.fr       */
+/*   Updated: 2018/12/17 15:20:25 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int		main(int argc, char **argv)
 	t_fdf inst;
 
 	if (argc != 2)
-		return (0);
+		return (close_main(&inst, "Error: Bad arguments. Usage: ./fdf <map>"));
 	inst.win = NULL;
 	inst.mlx = NULL;
 	if (!(inst.map = init_map(argv[1])))

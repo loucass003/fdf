@@ -1,0 +1,9 @@
+a.out
+*.a
+*.o
+
+
+get_files.sh
+.vscode
+test.c
+test.c.save
