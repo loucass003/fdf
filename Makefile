@@ -6,14 +6,13 @@
 #    By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 14:49:27 by llelievr          #+#    #+#              #
-#    Updated: 2018/12/17 14:46:52 by llelievr         ###   ########.fr        #
+#    Updated: 2019/01/08 18:12:06 by llelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 include src.mk
 
 NAME	=fdf
-SRC		=$(shell find srcs -type f | sed 's\#^srcs/\#\#')
 OBJ		=$(addprefix $(OBJDIR),$(SRC:.c=.o))
 
 # compiler
