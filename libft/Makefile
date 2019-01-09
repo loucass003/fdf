@@ -6,13 +6,13 @@
 #    By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 14:49:27 by llelievr          #+#    #+#              #
-#    Updated: 2018/12/17 13:21:06 by llelievr         ###   ########.fr        #
+#    Updated: 2019/01/09 15:12:36 by llelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 NAME =libft.a
-CFLAGS=-Wall -Werror -Wextra -I ./includes 
+CFLAGS=-Wall -Werror -Wextra -I ./includes -flto -O3 -ffast-math
 SRC=./ft_abs.c \
 	./ft_absf.c \
 	./ft_atoi.c \
