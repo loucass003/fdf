@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:56:27 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/17 15:20:25 by llelievr         ###   ########.fr       */
+/*   Updated: 2019/01/29 22:19:20 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ int		close_main(t_fdf *inst, char *msg)
 	if (!inst)
 		return (0);
 	if (inst->map)
-		ft_memdel((void **)inst->map->points);
-	ft_memdel((void **)inst->map);
+		free((void *)inst->map->points);
+	free((void *)inst->map);
 	if (inst->mlx && inst->win)
 	{
 		clear_img(inst, inst->img);
@@ -66,5 +66,5 @@ int		main(int argc, char **argv)
 	mlx_expose_hook(inst.win, draw_map, &inst);
 	mlx_loop_hook(inst.mlx, draw_map, &inst);
 	mlx_loop(inst.mlx);
-	return (close_main(&inst, "Bye Bye."));
+	return (close_main(&inst, NULL));
 }

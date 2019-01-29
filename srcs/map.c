@@ -6,7 +6,7 @@
 /*   By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 21:31:15 by llelievr          #+#    #+#             */
-/*   Updated: 2018/12/17 14:53:04 by llelievr         ###   ########.fr       */
+/*   Updated: 2019/01/21 14:39:11 by llelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ t_map			*init_map(char *file)
 		return (NULL);
 	map->max_height = 0;
 	if (!(map->points = parse_file(fd, &map->size, &map->cols,
-	&map->max_height)) || map->size == 0)
+	&map->max_height)) || map->size <= 1)
 		return (free_ret(map));
 	map->rows = map->size / map->cols;
 	map->z_factor = (float)ft_absf(map->max_height / 10) / map->size;

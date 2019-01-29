@@ -6,18 +6,18 @@
 #    By: llelievr <llelievr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 14:49:27 by llelievr          #+#    #+#              #
-#    Updated: 2019/01/08 18:12:06 by llelievr         ###   ########.fr        #
+#    Updated: 2019/01/29 22:20:50 by llelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-include src.mk
+-include src.mk
 
 NAME	=fdf
 OBJ		=$(addprefix $(OBJDIR),$(SRC:.c=.o))
 
 # compiler
 CC		=gcc
-CFLAGS	=-Wall -Werror -Wextra -flto -O3 -Ofast -ffast-math
+CFLAGS	=-Wall -Werror -Wextra -flto -O3 -ffast-math
 
 # mlx library
 MLX_INC	=-I /usr/local/include
@@ -57,7 +57,7 @@ $(FT_LIB):
 	make -j4 -C $(FT)
 
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) $(MLX_LNK) $(FT_LNK) -lm -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(MLX_LNK) $(FT_LNK) -lm -o $(NAME)
 
 
 

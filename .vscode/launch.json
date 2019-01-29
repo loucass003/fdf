@@ -7,11 +7,10 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/fdf",
 			"stopAtEntry": true,
-			"args": ["test_maps/42.fdf"],
+			"args": ["test"],
 			"cwd": "${workspaceFolder}",
 			"externalConsole": false,
 			"MIMode": "lldb",
-			"preLaunchTask": "build GNL"
 		}
 	]
 }
